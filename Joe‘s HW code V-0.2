@@ -71,7 +71,7 @@ public class Ma{
 	
 
 	while(true) {
-		String usr = jool.pyInput("Username?");
+		String usr = jool.pyInput("Username/Command ?");
 		if(usr.equals("exit\r")) {//用来保存
 			try {
 			FileWriter writer = new FileWriter("accounts.sav");
@@ -80,6 +80,8 @@ public class Ma{
 					writer.write(accs.showUser()+" ");
 					writer.write(accs.showPasswd()+"\n");
 				}writer.close();
+				jool.print("Saved and Stoping....");
+				System.exit(0);
 			}catch (Exception e) {System.out.println(e);;}
 			continue;
 		}
@@ -98,6 +100,7 @@ public class Ma{
 		if(pwd.equals(repwd)) {
 			//在这里向arrayList添加对象
 			textArray.add(new AccountS(usr.substring(0,usr.length()-1), repwd.substring(0,repwd.length()-1)));
+			jool.print("Loaded.");
 		}else {jool.print("different password in two times!");continue;}
 	}
 	//////////Main 结束/////////////////
