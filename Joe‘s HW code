@@ -1,0 +1,105 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+public class Ma{
+	public static void main(String[] args){
+///////////////类及方法包装///////////////////////
+		class toolBox{  		//python 赛高！！
+			public toolBox() {System.out.println("T0olbox loaded!");}
+			public void print(String L) {System.out.println(L);}
+			public String pyInput(String question) {
+				System.out.print(question);
+				Scanner sc=new Scanner(System.in).useDelimiter("\n");
+				String rawString=sc.next();
+//				sc.close();
+				return rawString;
+			}
+			
+			public boolean checkUname(String username) {//用户名a-z， 3到8位
+				//规则，用于检测用户名是否合法
+				return username.substring(0,username.length()-1).matches("^[a-z]{3,8}+$");
+			}
+			
+			public boolean checkPaswd(String paswd) {//密码大小写字母可用，数字可用，8到15位
+				//同checkUname
+				return paswd.substring(0,paswd.length()-1).matches("^[a-z0-9A-Z]{8,15}+$");
+			}	
+		}toolBox jool = new toolBox();//原地拍个工具箱
+		
+		class AccountS{
+			String usernameString;
+			String passwdString;
+			
+			private String showUser() {return usernameString;}
+			private String showPasswd() {return passwdString;}
+			public AccountS(String userString, String passString) {//构造函数
+				passwdString = passString;
+				usernameString = userString;
+				
+			}
+		}
+		
+///////////////执行部分/////////////
+	ArrayList <AccountS> textArray= new ArrayList();
+
+	try { //读取存档文件
+	FileReader reader =new FileReader("accounts.sav");
+	BufferedReader buff= new BufferedReader(reader);//从文件读入buffer
+	
+	String lineText;
+	while((lineText=buff.readLine())!=null){// 每行迭代读取
+			jool.print( "Loaded |V|    :\n" +"---------------------\n" + lineText);
+			String[] temporaryS=lineText.split(" ");
+			textArray.add(new AccountS(temporaryS[0],temporaryS[1]));//把AccountS对象加入array
+		}buff.close();reader.close();  		//顺手关门
+		jool.print("===========================");
+		
+	}catch (java.io.FileNotFoundException e) {
+		try {
+			FileWriter writer = new FileWriter("accounts.sav");
+			writer.write("username password");  
+			writer.close(); 					//避免文件不存在的情况
+			}catch (Exception a){}
+		}catch (IOException e) {} 			//用来抛出前面readLine的错误
+	
+   ///////////初始化完成，进入用户循环/////////////
+	
+
+	while(true) {
+		String usr = jool.pyInput("Username?");
+		if(usr.equals("exit\r")) {//用来保存
+			try {
+			FileWriter writer = new FileWriter("accounts.sav");
+				for(AccountS accs : textArray) {
+					jool.print(accs.showUser()+" ");
+					writer.write(accs.showUser()+" ");
+					writer.write(accs.showPasswd()+"\n");
+				}writer.close();
+			}catch (Exception e) {System.out.println(e);;}
+			continue;
+		}
+			
+		
+		if (jool.checkUname(usr)==false) {//大量检测
+		jool.print("Illegal username!");
+		continue;}
+		
+		String pwd = jool.pyInput("password>");
+		if (jool.checkPaswd(pwd)==false) {
+			jool.print("Illegal password!");
+			continue;}
+		
+		String repwd = jool.pyInput("confirm password>");
+		if(pwd.equals(repwd)) {
+			//在这里向arrayList添加对象
+			textArray.add(new AccountS(usr.substring(0,usr.length()-1), repwd.substring(0,repwd.length()-1)));
+		}else {jool.print("different password in two times!");continue;}
+	}
+	//////////Main 结束/////////////////
+	}
+}
